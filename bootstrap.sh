@@ -8,20 +8,17 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y ruby ruby-dev libopenssl-ruby rdoc ri irb build-essential wget ssl-cert git-core vim
 
-#git clone git://github.com/erikh/smoking-chef.git chef
-sudo cp -r chef /etc/
-sudo chown -R root:root /etc/chef
-sudo chmod 700 /etc/chef
+git clone git://github.com/erikh/smoking-chef.git chef
 
-#if [ $? = 0 ]
-#then
-    #sudo mv chef /etc/chef
-    #sudo chown -R root:root /etc/chef
-    #sudo chmod 700 /etc/chef
-#else
-    #echo "'git clone' did not complete."
-    #exit 1
-#fi
+if [ $? = 0 ]
+then
+    sudo mv chef /etc/chef
+    sudo chown -R root:root /etc/chef
+    sudo chmod 700 /etc/chef
+else
+    echo "'git clone' did not complete."
+    exit 1
+fi
 
 wget http://production.cf.rubygems.org/rubygems/rubygems-${RUBYGEMS_VERSION}.tgz
 tar zxf rubygems-${RUBYGEMS_VERSION}.tgz
