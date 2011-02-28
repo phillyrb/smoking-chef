@@ -1,5 +1,5 @@
 {
   'run_list' => [
-    'rvm::ruby_192'
+    'recipe[rvm::ruby_192]'
   ]
 }
