@@ -1,0 +1,8 @@
+= Smoking Chef!
+
+Smoking Chef is a set of Chef recipes to build a gem-testers smoker. You too,
+can warm the earth gradually providing QA results for people!
+
+Documentation? Meh. Read the source you noobs.
+
+-Erik
