@@ -6,7 +6,7 @@
         "uid": 2001,
         "shell": "\/bin\/bash",
         "comment": "Erik Hollensbe"
-      },
+      }
   },
 
   "authorization": {
