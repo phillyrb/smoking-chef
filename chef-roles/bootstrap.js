@@ -18,7 +18,7 @@
   },
 
   "rvm_gems": [
-    "vagrant",
+    "vagrant"
   ],
 
   "run_list": [
