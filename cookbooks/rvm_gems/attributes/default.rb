@@ -1,1 +1,1 @@
-defaults[:rvm_gems] = []
+default[:rvm_gems] = []
