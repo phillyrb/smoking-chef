@@ -17,11 +17,16 @@
     }
   },
 
+  "rvm_gems": [
+    "vagrant",
+  ],
+
   "run_list": [
     "recipe[users::sysadmins]",
     "recipe[sudo]",
     "recipe[rvm::ruby_192]",
-    "recipe[vbox]"
+    "recipe[vbox]",
+    "recipe[rvm_gems]"
   ]
 }
 
