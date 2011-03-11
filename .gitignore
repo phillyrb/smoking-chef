@@ -1,2 +1,3 @@
 services/heartbeat/heartbeat.db
 services/test-runner/*.db
+services/test-runner/*.log
