@@ -1,0 +1,13 @@
+<!-- kickin it old school -->
+<style>
+  td { text-align: center }
+</style>
+<table border="1">
+  <thead>
+    <th>IP Address</th>
+    <th>Next Gem to Test</th>
+  </thead>
+  <% @rows.each do |row| %>
+    <tr><td><%= row[:ip] %></td><td><%= row[:gem] %></td></tr>
+  <% end %>
+</table>
