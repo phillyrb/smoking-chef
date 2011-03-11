@@ -1,0 +1,3 @@
+Run init_heartbeat in the cwd. Then, run 'shotgun heartbeat' to test it.
+
+Chef recipes should set this up right on the box itself.
