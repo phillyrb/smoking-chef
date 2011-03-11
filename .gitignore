@@ -1,1 +1,2 @@
 services/heartbeat/heartbeat.db
+services/test-runner/*.db

@@ -1,0 +1,10 @@
+# Logfile created on 2011-03-11 01:30:44 -0500 by logger.rb/25413
+D, [2011-03-11T01:30:44.085119 #2591] DEBUG -- : prepping daemonize
+D, [2011-03-11T01:30:44.085321 #2591] DEBUG -- : redirecting filehandles
+D, [2011-03-11T01:30:44.085463 #2591] DEBUG -- : setsid
+I, [2011-03-11T01:30:44.085538 #2591]  INFO -- : initializing main loop
+D, [2011-03-11T01:38:16.603835 #2618] DEBUG -- : prepping daemonize
+D, [2011-03-11T01:38:16.605360 #2618] DEBUG -- : redirecting filehandles
+D, [2011-03-11T01:38:16.605513 #2618] DEBUG -- : setsid
+I, [2011-03-11T01:38:16.605610 #2618]  INFO -- : initializing main loop
+I, [2011-03-11T01:39:04.852441 #2629]  INFO -- : initializing main loop
