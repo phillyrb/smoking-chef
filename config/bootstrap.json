@@ -26,7 +26,8 @@
     "recipe[sudo]",
     "recipe[rvm::ruby_192]",
     "recipe[vbox]",
-    "recipe[rvm_gems]"
+    "recipe[rvm_gems]",
+    "recipe[gt-services::heartbeat]"
   ]
 }
 

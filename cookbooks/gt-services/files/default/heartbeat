@@ -1,0 +1,15 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+    cd /test/heartbeat
+    sudo -u test bash -c '. /etc/profile; thin -d -p 8000 -P /test/heartbeat/thin.pid start'
+  ;;
+  stop) 
+    kill $(cat /test/heartbeat/thin.pid)
+  ;;
+  restart)
+    $0 stop
+    $0 start
+  ;;
+esac
