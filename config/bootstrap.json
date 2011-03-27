@@ -27,6 +27,7 @@
     "recipe[rvm::ruby_192]",
     "recipe[vbox]",
     "recipe[rvm_gems]",
+    "recipe[rubygems-mirror]",
     "recipe[gt-services::heartbeat]"
   ]
 }
