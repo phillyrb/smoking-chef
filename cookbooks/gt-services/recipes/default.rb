@@ -19,7 +19,7 @@ end
 git '/test/smoking-chef' do
   user 'test'
   group 'test'
-  repository 'git://github.com/erikh/smoking-chef.git'
+  repository 'git://github.com/phillyrb/smoking-chef.git'
   reference 'master'
   action :sync
 end
