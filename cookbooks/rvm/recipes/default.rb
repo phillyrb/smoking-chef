@@ -16,7 +16,7 @@ end
  
 bash "installing system-wide RVM stable" do
   user "root"
-  code "bash < <( curl -B http://rvm.beginrescueend.com/install/rvm )"
+  code "bash < <( curl -s https://rvm.beginrescueend.com/install/rvm )"
   not_if "which rvm"
 end
 
@@ -43,4 +43,10 @@ cookbook_file "/usr/local/bin/rvm-gem.sh" do
   owner "root"
   group "root"
   mode 0755
+end
+
+bash "fixing up bashrc for RVM" do
+  user "root"
+  code '(echo ". /etc/profile.d/rvm.sh"; cat /etc/bash.bashrc) > /tmp/bash.bashrc; mv /tmp/bash.bashrc /etc/bash.bashrc'
+  not_if 'head -1 /etc/bash.bashrc | grep -q rvm'
 end

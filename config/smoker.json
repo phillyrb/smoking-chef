@@ -20,15 +20,6 @@
   "rvm_gems": [
     "vagrant"
   ],
-  
-  "vagrant": { 
-    "machines": {
-      "ubuntu": {
-        "url": "http://hollensbe.org/ubuntu.box",
-        "memory": 512
-      }
-    }
-  },
 
   "run_list": [
     "recipe[users::sysadmins]",
@@ -36,9 +27,7 @@
     "recipe[rvm::ruby_192]",
     "recipe[vbox]",
     "recipe[rvm_gems]",
-    "recipe[rubygems-mirror]",
-    "recipe[gt-services::heartbeat]",
-    "recipe[vagrant-machines]"
+    "recipe[gt-services::heartbeat]"
   ]
 }
 

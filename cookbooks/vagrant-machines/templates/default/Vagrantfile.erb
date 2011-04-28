@@ -1,0 +1,19 @@
+require 'vagrant/spatula'
+
+#
+# Here is a small template you can use to bootstrap new VMs.
+#
+# Memory usage is high because rubygems (and gems themselves) can eat a lot of
+# ram on some operations.
+#
+Vagrant::Config.run do |config|
+  config.vm.box = "<%= @box_name %>"
+
+  config.vm.provision SpatulaProvisioner do |spatula|
+    spatula.node = "<%= @node_name || "smoker" %>"
+  end
+
+  config.vm.customize do |custom|
+    custom.memory_size = <%= @machine_memory %>
+  end
+end

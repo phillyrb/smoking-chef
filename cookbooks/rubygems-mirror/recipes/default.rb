@@ -11,7 +11,7 @@ end
 install_gem "hoe"
 
 git "/tmp/rubygems-mirror" do
-  repository "git://github.com/erikh/rubygems-mirror.git"
+  repository "git://github.com/rubygems/rubygems-mirror.git"
   action :sync
 end
 

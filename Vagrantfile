@@ -6,7 +6,8 @@ Vagrant::Config.run do |config|
     spatula.node = "bootstrap"
   end
 
-  config.vm.customize do |custom|
-    custom.memory_size = 4096
+  config.vm.customize do |vm|
+    vm.memory_size = 3500 
+    vm.cpu_count = 2
   end
 end

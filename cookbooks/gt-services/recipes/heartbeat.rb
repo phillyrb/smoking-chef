@@ -1,5 +1,9 @@
 include_recipe "gt-services::default"
 
+#
+# refactor into a lib
+#
+
 def install_gem gem 
   gem_package gem do
     gem_binary "/usr/local/bin/rvm-gem.sh"
