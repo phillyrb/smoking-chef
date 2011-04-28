@@ -15,7 +15,7 @@ install_gem 'vagrant-spatula'
 directory '/storage' do
   owner 'root'
   group 'root'
-  mode 750
+  mode 0750
   action :create
 end
 
