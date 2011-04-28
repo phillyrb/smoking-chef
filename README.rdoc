@@ -3,6 +3,24 @@
 Smoking Chef is a set of Chef recipes to build a gem-testers smoker. You too,
 can warm the earth gradually providing QA results for people!
 
-Documentation? Meh. Read the source you noobs.
+= Documentation
+
+Pretty sparse right now, but here goes:
+
+* run the 'install_gems.sh' script, preferably on 1.9.
+* spatula prepare user@host --upload-key --keyfile=$HOME/.ssh/my_key.pub
+* spatula cook user@host bootstrap
+* Go play a video game or something
+
+When you're done, you should have one VM installed, in /storage/ubuntu.
+
+Be aware this pulls a base box off my limited bandwidth host, so be kind.
+
+= Customizing
+
+* bootstrap.json has user accounts you should edit, and VMs you can edit.
+* smoker.json is the node configuration for VMs, and has user accounts you can edit.
+
+More coming later.
 
 -Erik

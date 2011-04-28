@@ -24,10 +24,7 @@
   "run_list": [
     "recipe[users::sysadmins]",
     "recipe[sudo]",
-    "recipe[rvm::ruby_192]",
-    "recipe[vbox]",
-    "recipe[rvm_gems]",
-    "recipe[gt-services::heartbeat]"
+    "recipe[rvm::ruby_192]"
   ]
 }
 

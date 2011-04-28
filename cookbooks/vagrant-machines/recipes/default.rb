@@ -21,6 +21,7 @@ end
 
 node[:vagrant][:machines].each do |name, machine|
   bash "adding base box from #{machine[:url]}" do
+    user "root"
     code %Q[rvm-shell '1.9.2' -c "vagrant box add #{name} '#{machine[:url]}'" || exit 0]
   end
 
@@ -28,11 +29,13 @@ node[:vagrant][:machines].each do |name, machine|
   # Prefer to use the copy of chef we're already working with.
   #
   bash "copying chef repo to /storage/#{name}" do
+    user "root"
     code "cp -vR /tmp/chef-solo /storage/#{name}"
     only_if "test -d /tmp/chef-solo"
   end
 
   git "/storage/#{name}" do
+    user "root"
     repository "git://github.com/phillyrb/smoking-chef" 
     not_if "test -d /tmp/chef-solo"
   end
@@ -50,6 +53,10 @@ node[:vagrant][:machines].each do |name, machine|
   end
 
   bash "provisioning #{name}" do
-    code "cd /storage/#{name}; rvm-shell '1.9.2' -c 'vagrant init; (vagrant up || vagrant provision) 2>&1 1>/tmp/provision-#{name}-log'"
+    user "root"
+    code %Q[
+      cd /storage/#{name}
+      rvm-shell '1.9.2' -c 'vagrant init; (vagrant up || vagrant provision) 2>&1 1>/tmp/provision-#{name}-log'
+    ]
   end
 end
