@@ -80,5 +80,6 @@ end
 sleep 5
 
 sqlite_thread.kill
+db.close
 
 exit 0
