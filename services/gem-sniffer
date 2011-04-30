@@ -5,6 +5,7 @@ require 'rubygems/installer'
 require 'fileutils'
 require 'tempfile'
 require 'sqlite3'
+require 'thread'
 
 ROOT = '/storage/rubygems-mirror'
 DB = File.join(ROOT, 'gems.db')
@@ -25,28 +26,59 @@ if init_sql
 end
 
 known_gems = db.execute("select filename from known_gems").map { |x| x[0] }
+glob       = Dir["/storage/rubygems-mirror/gems/*.gem"]
+known_gems_q = Queue.new
+valid_gems_q = Queue.new
+glob_mutex = Mutex.new
 
-p known_gems
+unpack_threads = (0..5).to_a.map do |x|
+  Thread.new do
+    loop do
+      gem = glob_mutex.synchronize do
+        glob.shift
+      end
+      
+      break unless gem
 
-# this is going to be a very big array.
-Dir["/storage/rubygems-mirror/gems/*.gem"].each do |gem|
-  begin
-    base_gem = File.basename(gem)
-    next if known_gems.include?(base_gem)
+      base_gem = File.basename(gem)
 
-    db.execute("insert into known_gems (filename) values (?)", base_gem)
+      next if known_gems.include?(base_gem) 
 
-    inst = Gem::Installer.new(gem)
-    $tmpdir = Dir.mktmpdir
-    inst.unpack($tmpdir)
+      known_gems_q << base_gem
 
-    if File.exist?(File.join($tmpdir, '.gemtest'))
-      db.execute("insert into valid_gems (filename) values (?)", base_gem)
+      begin
+        inst = Gem::Installer.new(gem)
+        tmpdir = Dir.mktmpdir
+        inst.unpack(tmpdir)
+
+        if File.exist?(File.join(tmpdir, '.gemtest'))
+          valid_gems_q << base_gem
+        end
+
+      ensure 
+        FileUtils.rm_r tmpdir if tmpdir and File.exist?(tmpdir)
+      end
     end
-
-    raise
-  rescue
-    FileUtils.rm_rf $tmpdir if $tmpdir and File.exist?($tmpdir)
-    next
   end
 end
+
+sqlite_thread = Thread.new do
+  loop do
+    while known_gem = known_gems_q.shift
+      db.execute("insert into known_gems (filename) values (?)", known_gem)
+    end
+    while valid_gem = valid_gems_q.shift
+      db.execute("insert into valid_gems (filename) values (?)", valid_gem)
+    end
+  end
+end
+
+until unpack_threads.reject(&:alive?).length == 0 and known_gems_q.empty? and valid_gems_q.empty?
+  sleep 1
+end
+
+sleep 5
+
+sqlite_thread.kill
+
+exit 0
