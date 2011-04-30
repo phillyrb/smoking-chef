@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'rubygems/installer'
+require 'fileutils'
+require 'tempfile'
+require 'sqlite3'
+
+ROOT = '/storage/rubygems-mirror'
+DB = File.join(ROOT, 'gems.db')
+
+SQL = [
+  %q[create table valid_gems (filename varchar primary key)],
+  %q[create table known_gems (filename varchar primary key)]
+]
+
+init_sql = !File.exist?(DB)
+
+db = SQLite3::Database.new(DB)
+
+if init_sql
+  SQL.each do |sql|
+    db.execute sql
+  end
+end
+
+known_gems = db.execute("select filename from known_gems").map { |x| x[0] }
+
+p known_gems
+
+# this is going to be a very big array.
+Dir["/storage/rubygems-mirror/gems/*.gem"].each do |gem|
+  begin
+    base_gem = File.basename(gem)
+    next if known_gems.include?(base_gem)
+
+    db.execute("insert into known_gems (filename) values (?)", base_gem)
+
+    inst = Gem::Installer.new(gem)
+    $tmpdir = Dir.mktmpdir
+    inst.unpack($tmpdir)
+
+    if File.exist?(File.join($tmpdir, '.gemtest'))
+      db.execute("insert into valid_gems (filename) values (?)", base_gem)
+    end
+
+    raise
+  rescue
+    FileUtils.rm_rf $tmpdir if $tmpdir and File.exist?($tmpdir)
+    next
+  end
+end
