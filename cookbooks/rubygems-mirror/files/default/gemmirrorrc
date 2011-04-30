@@ -1,0 +1,5 @@
+---
+- from: "http://rubygems.org"
+  to: "/storage/rubygems-mirror"
+
+# vim: ft=yaml

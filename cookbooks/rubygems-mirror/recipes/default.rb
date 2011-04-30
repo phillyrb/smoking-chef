@@ -25,3 +25,15 @@ directory "/tmp/rubygems-mirror" do
   action :delete
   recursive true
 end
+
+directory "/storage/rubygems-mirror" do
+  action :create
+  recursive true
+end
+
+cookbook_file '/root/.gemmirrorrc' do
+  action :create
+  owner 'root'
+  group 'root'
+  source 'gemmirrorrc'
+end
