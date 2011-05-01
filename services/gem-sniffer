@@ -8,78 +8,102 @@ require 'sqlite3'
 require 'thread'
 
 ROOT = '/storage/rubygems-mirror'
-DB = File.join(ROOT, 'gems.db')
+KNOWN_FILE = File.join(ROOT, "known")
+VALID_FILE = File.join(ROOT, "valid")
 
-SQL = [
-  %q[create table valid_gems (filename varchar primary key)],
-  %q[create table known_gems (filename varchar primary key)]
-]
+$glob       = Dir["/storage/rubygems-mirror/gems/*.gem"]
+$known_gems_q = []
+$valid_gems_q = []
+$glob_mutex = Mutex.new
+$puts_mutex = Mutex.new
+$array_mutex = Mutex.new
 
-init_sql = !File.exist?(DB)
+$glob.compact!
 
-db = SQLite3::Database.new(DB)
+if File.exist?(KNOWN_FILE)
+  $known_gems = File.read(KNOWN_FILE).split(/\n/)
+else
+  $known_gems = []
+end
 
-if init_sql
-  SQL.each do |sql|
-    db.execute sql
+$sqlite_thread = Thread.new do
+  known = File.open(KNOWN_FILE, 'a')
+  valid = File.open(VALID_FILE, 'a')
+
+  at_exit { known.close; valid.close }
+
+  loop do
+    begin
+      puts "Processing valid gems"
+ 
+      $array_mutex.synchronize do
+        while valid_gem = $valid_gems_q.shift
+          valid.puts valid_gem
+        end
+      end
+  
+      puts "Processing known gems"
+  
+      $array_mutex.synchronize do
+        while known_gem = $known_gems_q.shift
+          known.puts known_gem
+        end
+      end
+
+      Thread.pass 
+      sleep 1
+    rescue Exception => e
+      puts e.message
+    end
   end
 end
 
-known_gems = db.execute("select filename from known_gems").map { |x| x[0] }
-glob       = Dir["/storage/rubygems-mirror/gems/*.gem"]
-known_gems_q = Queue.new
-valid_gems_q = Queue.new
-glob_mutex = Mutex.new
-
-unpack_threads = (0..5).to_a.map do |x|
+$unpack_threads = (0..5).to_a.map do |x|
   Thread.new do
     loop do
-      gem = glob_mutex.synchronize do
-        glob.shift
+      gem = $glob_mutex.synchronize do
+        $glob.shift
       end
-      
+  
+      $puts_mutex.synchronize { puts "Processing gem: #{gem}" }
+  
       break unless gem
-
+  
       base_gem = File.basename(gem)
-
-      next if known_gems.include?(base_gem) 
-
-      known_gems_q << base_gem
-
+  
+      next if $known_gems.include?(base_gem) 
+  
+      $puts_mutex.synchronize { puts "new gem: #{base_gem}" }
+  
+      $array_mutex.synchronize { $known_gems_q << base_gem }
+  
       begin
         inst = Gem::Installer.new(gem)
         tmpdir = Dir.mktmpdir
         inst.unpack(tmpdir)
-
+  
         if File.exist?(File.join(tmpdir, '.gemtest'))
-          valid_gems_q << base_gem
+          $puts_mutex.synchronize { puts "valid gem: #{base_gem}" }
+          $array_mutex.synchronize { $valid_gems_q << base_gem }
         end
-
+      rescue Exception => e
+        puts e.message
       ensure 
         FileUtils.rm_r tmpdir if tmpdir and File.exist?(tmpdir)
+        Thread.pass
       end
     end
   end
 end
 
-sqlite_thread = Thread.new do
-  loop do
-    while known_gem = known_gems_q.shift
-      db.execute("insert into known_gems (filename) values (?)", known_gem)
-    end
-    while valid_gem = valid_gems_q.shift
-      db.execute("insert into valid_gems (filename) values (?)", valid_gem)
-    end
-  end
+$unpack_threads.map(&:join)
+
+until $known_gems_q.empty? and $valid_gems_q.empty?
+  puts "Dumping Queues: known: #{$known_gems_q.length} valid: #{$valid_gems_q.length}"
+  Thread.pass
+  sleep 5
 end
 
-until unpack_threads.reject(&:alive?).length == 0 and known_gems_q.empty? and valid_gems_q.empty?
-  sleep 1
-end
-
-sleep 5
-
-sqlite_thread.kill
-db.close
+$sqlite_thread.exit
 
 exit 0
