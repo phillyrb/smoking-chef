@@ -8,9 +8,9 @@ can warm the earth gradually providing QA results for people!
 Pretty sparse right now, but here goes:
 
 * bootstrap a new machine (VirtualBox will *not* work, use hardware or VMWare). 
- * Use Ubuntu 10.04 or 10.10.
- * Make note of the user account name you created. It will be +user+ below.
- * this machine should preferably have 4G or more of ram, at least 2 cores and VT-x or alike.
+  * Use Ubuntu 10.04 or 10.10.
+  * Make note of the user account name you created. It will be +user+ below.
+  * this machine should preferably have 4G or more of ram, at least 2 cores and VT-x or alike.
 * run the 'install_gems.sh' script, preferably on 1.9.
 * spatula prepare user@host --upload-key --keyfile=$HOME/.ssh/my_key.pub
 * spatula cook user@host bootstrap
