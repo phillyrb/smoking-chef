@@ -18,6 +18,9 @@ Be aware this pulls a base box off my limited bandwidth host, so be kind.
 
 = Customizing
 
+It is strongly recommended that you fork and customize this project to fit your
+personal environment.
+
 * bootstrap.json has user accounts you should edit, and VMs you can edit.
 * smoker.json is the node configuration for VMs, and has user accounts you can edit.
 
