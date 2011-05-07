@@ -4,7 +4,7 @@
 
 def install_gem gem 
   gem_package gem do
-    gem_binary "/usr/local/bin/rvm-gem.sh"
+    gem_binary ". /etc/profile.d/rvm.sh && gem"
   end
 end
 
@@ -22,7 +22,7 @@ end
 node[:vagrant][:machines].each do |name, machine|
   bash "adding base box from #{machine[:url]}" do
     user "root"
-    code %Q[rvm-shell '1.9.2' -c "vagrant box add #{name} '#{machine[:url]}'" || exit 0]
+    code %Q[vagrant box add #{name} '#{machine[:url]}' || exit 0]
   end
 
   #
@@ -56,7 +56,7 @@ node[:vagrant][:machines].each do |name, machine|
     user "root"
     code %Q[
       cd /storage/#{name}
-      rvm-shell '1.9.2' -c 'vagrant init; (vagrant up || vagrant provision) 2>&1 1>/tmp/provision-#{name}-log'
+      vagrant init; vagrant up; vagrant provision
     ]
   end
 end

@@ -1,6 +1,6 @@
 def install_gem gem 
   gem_package gem do
-    gem_binary "/usr/local/bin/rvm-gem.sh"
+    gem_binary ". /etc/profile.d/rvm.sh && gem"
   end
 end
 
@@ -17,7 +17,7 @@ end
 
 bash "building and installing rubygems-mirror" do
   cwd "/tmp/rubygems-mirror"
-  code "/usr/local/bin/rvm-shell '1.9.2' -c 'rake gem && gem install pkg/rubygems-mirror*.gem'"
+  code "rake gem && gem install pkg/rubygems-mirror*.gem"
   not_if "gem list --local | grep -q 'rubygems-mirror'"
 end
 

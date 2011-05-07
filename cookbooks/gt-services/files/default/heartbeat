@@ -3,7 +3,7 @@
 case "$1" in
   start)
     cd /test/heartbeat
-    sudo -u test bash -c '. /etc/profile; thin -d -p 8000 -P /test/heartbeat/thin.pid start'
+    sudo -u test /usr/local/rvm/bin/rvm-shell "1.9.2" -c "thin -d -p 8000 -P /test/heartbeat/thin.pid start"
   ;;
   stop) 
     kill $(cat /test/heartbeat/thin.pid)

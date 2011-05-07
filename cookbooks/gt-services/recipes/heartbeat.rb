@@ -6,7 +6,7 @@ include_recipe "gt-services::default"
 
 def install_gem gem 
   gem_package gem do
-    gem_binary "/usr/local/bin/rvm-gem.sh"
+    gem_binary ". /etc/profile.d/rvm.sh && gem"
   end
 end
 
@@ -18,7 +18,7 @@ end
 
 install_gem 'thin'
 install_gem 'sinatra'
-install_gem 'sqlite3-ruby'
+install_gem 'sqlite3'
 
 cookbook_file '/etc/init.d/heartbeat' do
   action :create
