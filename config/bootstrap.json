@@ -17,6 +17,13 @@
     }
   },
 
+  "rvm": {
+    "ruby": {
+      "version": "1.9.2",
+      "default": true
+    }
+  },
+
   "rvm_gems": [
     "vagrant"
   ],
