@@ -6,7 +6,7 @@ include_recipe "gt-services::default"
 
 def install_gem gem 
   gem_package gem do
-    gem_binary ". /etc/profile.d/rvm.sh && gem"
+    gem_binary "/usr/local/bin/rvm-gem.sh"
   end
 end
 
@@ -42,7 +42,7 @@ end
 
 bash 'initializing database for heartbeat daemon' do
   user 'test'
-  code 'cd /test/heartbeat && ruby init_heartbeat.rb' 
+  code 'cd /test/heartbeat && /usr/local/rvm/bin/rvm-shell "1.9.2" -c "ruby init_heartbeat.rb"'
   not_if 'test -f /test/heartbeat/heartbeat.db'
 end
 
