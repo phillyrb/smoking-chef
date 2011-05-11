@@ -35,13 +35,13 @@ node[:vagrant][:machines].each do |name, machine|
   #
   # Prefer to use the copy of chef we're already working with.
   #
-  bash "copying chef repo to /storage/#{name}" do
+  bash "copying chef repo to /storage/machines/#{name}" do
     user "root"
-    code "cp -vR /tmp/chef-solo /storage/#{name}"
+    code "cp -vR /tmp/chef-solo /storage/machines/#{name}"
     only_if "test -d /tmp/chef-solo"
   end
 
-  git "/storage/#{name}" do
+  git "/storage/machines/#{name}" do
     user "root"
     repository "git://github.com/phillyrb/smoking-chef" 
     not_if "test -d /tmp/chef-solo"
