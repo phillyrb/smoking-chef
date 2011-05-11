@@ -45,9 +45,10 @@
     "recipe[vbox]",
     "recipe[rvm_gems]",
     "recipe[gt-services::heartbeat]",
-    "recipe[gt-services::gem-sniffer]",
     "recipe[vagrant-machines]",
     "recipe[rubygems-mirror]",
+    "recipe[gt-services::gem-sniffer]",
+    "recipe[gt-services::gem-shipper]",
     "recipe[crontab]"
   ]
 }
