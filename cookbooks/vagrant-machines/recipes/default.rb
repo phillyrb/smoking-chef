@@ -19,12 +19,12 @@ directory '/storage' do
   action :create
 end
 
-bash "initializing vagrant" do
-  user "root"
-  code %Q[/usr/local/rvm/bin/rvm-shell '1.9.2' -c 'vagrant init']
-  not_if 'test -d $HOME/.vagrant'
+directory '/storage/machines' do
+  owner 'root'
+  group 'root'
+  mode 0750
+  action :create
 end
-
 
 node[:vagrant][:machines].each do |name, machine|
   bash "adding base box from #{machine[:url]}" do
@@ -47,7 +47,7 @@ node[:vagrant][:machines].each do |name, machine|
     not_if "test -d /tmp/chef-solo"
   end
 
-  template "/storage/#{name}/Vagrantfile" do
+  template "/storage/machines/#{name}/Vagrantfile" do
     source "Vagrantfile.erb"
     mode 0640
     owner 'root'
@@ -60,10 +60,10 @@ node[:vagrant][:machines].each do |name, machine|
     )
   end
 
-  bash "provisioning #{name}" do
+  bash "provisioning/starting #{name}" do
     user "root"
     code %Q[
-      cd /storage/#{name}
+      cd /storage/machines/#{name}
       /usr/local/rvm/bin/rvm-shell '1.9.2' -c "vagrant up; vagrant provision"
     ]
   end
