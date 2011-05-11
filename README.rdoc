@@ -7,6 +7,9 @@ can warm the earth gradually providing QA results for people!
 
 Pretty sparse right now, but here goes:
 
+* Until this message disappears, use my fork of spatula which will work on Ubuntu 11
+  * http://github.com/erikh/spatula
+  * rake gem && gem install pkg/spatula-*.gem
 * bootstrap a new machine (VirtualBox will *not* work, use hardware or VMWare). 
   * Use Ubuntu 11.04
   * Make note of the user account name you created. It will be +user+ below.
