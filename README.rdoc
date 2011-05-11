@@ -5,7 +5,7 @@ can warm the earth gradually providing QA results for people!
 
 = Documentation
 
-Pretty sparse right now, but here goes:
+Pretty sparse right now, and the project isn't finished yet, but here goes:
 
 * Until this message disappears, use my fork of spatula which will work on Ubuntu 11
   * http://github.com/erikh/spatula
@@ -20,7 +20,7 @@ Pretty sparse right now, but here goes:
 * spatula cook user@host bootstrap
 * Go play a video game or something
 
-When you're done, you should have one VM installed, in /storage/ubuntu.
+When you're done, you should have one VM installed, in /storage/machines/ubuntu.
 
 Be aware this pulls a base box off my limited bandwidth host, so be kind.
 
