@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+mkdir -p /storage/valid-gems
+
+cd /storage/rubygems-mirror/gems
+
+while read gem
+do
+    cp $gem /storage/valid-gems
+done < /storage/rubygems-mirror/valid
+
+exec 1>&2
+
+while read port
+do
+    rsync -e "ssh -p $port" -az /storage/valid-gems vagrant@localhost:~
+
+    if [ $? -ne 0 ]
+    then
+        echo "rsync for $port failed to complete"
+    fi
+done < /storage/machines/machine_ports
