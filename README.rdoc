@@ -15,7 +15,7 @@ Pretty sparse right now, but here goes:
   * Make note of the user account name you created. It will be +user+ below.
   * Ensure the 'openssh server' role is selected when prompted.
   * this machine should preferably have 4G or more of ram, at least 2 cores and VT-x or alike.
-* run the 'install_gems.sh' script, preferably on 1.9.
+* run the 'install_gems.sh' script, preferably on ruby 1.9.2 or better.
 * spatula prepare user@host --upload-key --keyfile=$HOME/.ssh/my_key.pub
 * spatula cook user@host bootstrap
 * Go play a video game or something
