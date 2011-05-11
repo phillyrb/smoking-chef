@@ -19,6 +19,13 @@ directory '/storage' do
   action :create
 end
 
+bash "initializing vagrant" do
+  user "root"
+  code %Q[/usr/local/rvm/bin/rvm-shell '1.9.2' -c 'vagrant init']
+  not_if 'test -d $HOME/.vagrant'
+end
+
+
 node[:vagrant][:machines].each do |name, machine|
   bash "adding base box from #{machine[:url]}" do
     user "root"
@@ -48,7 +55,8 @@ node[:vagrant][:machines].each do |name, machine|
     variables(
       :box_name => name,
       :machine_memory => machine[:memory],
-      :node_name => machine[:node_name]
+      :node_name => machine[:node_name],
+      :forward_ssh_port => machine[:forward_ssh_port]
     )
   end
 
@@ -56,7 +64,7 @@ node[:vagrant][:machines].each do |name, machine|
     user "root"
     code %Q[
       cd /storage/#{name}
-      /usr/local/rvm/bin/rvm-shell '1.9.2' -c "vagrant init; vagrant up; vagrant provision"
+      /usr/local/rvm/bin/rvm-shell '1.9.2' -c "vagrant up; vagrant provision"
     ]
   end
 end

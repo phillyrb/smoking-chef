@@ -32,7 +32,8 @@
     "machines": {
       "ubuntu": {
         "url": "http://hollensbe.org/ubuntu.box",
-        "memory": 512
+        "memory": 512,
+        "forward_ssh_port": 2000
       }
     }
   },

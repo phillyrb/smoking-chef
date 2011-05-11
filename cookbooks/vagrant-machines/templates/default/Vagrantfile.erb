@@ -16,4 +16,8 @@ Vagrant::Config.run do |config|
   config.vm.customize do |custom|
     custom.memory_size = <%= @machine_memory %>
   end
+
+  config.vm.define :default do |custom|
+    custom.vm.forward_port("ssh", 22, <%= @forward_ssh_port || "2000" %>)
+  end
 end
