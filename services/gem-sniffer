@@ -4,7 +4,6 @@ require 'rubygems'
 require 'rubygems/installer'
 require 'fileutils'
 require 'tempfile'
-require 'sqlite3'
 require 'thread'
 
 ROOT = '/storage/rubygems-mirror'
@@ -26,7 +25,7 @@ else
   $known_gems = []
 end
 
-$sqlite_thread = Thread.new do
+$writer_thread = Thread.new do
   known = File.open(KNOWN_FILE, 'a')
   valid = File.open(VALID_FILE, 'a')
 
@@ -104,6 +103,6 @@ until $known_gems_q.empty? and $valid_gems_q.empty?
   sleep 5
 end
 
-$sqlite_thread.exit
+$writer_thread.exit
 
 exit 0
