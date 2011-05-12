@@ -1,2 +1,3 @@
 0 4 * * * root /usr/local/rvm/bin/rvm-shell '1.9.2' -c 'gem mirror' 2>&1 >/dev/null
 0 15 * * * root /usr/local/rvm/bin/rvm-shell '1.9.2' -c '/root/gem-sniffer' 2>&1 >/dev/null
+0 20 * * * root /usr/local/rvm/bin/rvm-shell '1.9.2' -c '/root/gem-shipper' 2>&1 >/dev/null

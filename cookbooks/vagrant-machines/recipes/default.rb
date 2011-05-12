@@ -68,3 +68,27 @@ node[:vagrant][:machines].each do |name, machine|
     ]
   end
 end
+
+cookbook_file "/etc/init.d/vagrant" do
+  source "vagrant_rc.d"
+  owner "root"
+  group "root"
+  mode 0750
+end
+
+service 'vagrant' do
+  action [:enable, :restart]
+  supports :restart => true
+  enabled true
+end
+
+#
+# FIXME
+#
+# Really not happy about this, there has to be some way to do this in the init
+# settings.
+#
+bash "move vagrant run order" do
+  code "mv /etc/rc2.d/S20vagrant /etc/rc2.d/S21vagrant && mv /etc/rc6.d/K20vagrant /etc/rc6.d/K19vagrant"
+  not_if "test -f /etc/rc2.d/S21vagrant"
+end
