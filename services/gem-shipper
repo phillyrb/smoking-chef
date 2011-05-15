@@ -6,13 +6,18 @@ cd /storage/rubygems-mirror/gems
 
 while read gem
 do
-    cp $gem /storage/valid-gems
+    if [ -f /storage/valid-gems/$gem ] && [ $(stat -c '%s' $gem) = $(stat -c '%s' /storage/valid-gems/$gem) ]
+    then
+        continue
+    else
+        cp $gem /storage/valid-gems
+    fi
 done < /storage/rubygems-mirror/valid
 
 for dir in /storage/machines/*
 do
     if [ -d $dir ]
     then
-        cp -R /storage/valid-gems $dir
+        rsync -az /storage/valid-gems $dir
     fi
 done
