@@ -2,14 +2,16 @@
 # refactor into a lib
 #
 
-def install_gem gem 
+def install_gem gem, ver=nil
   gem_package gem do
+    version ver 
     gem_binary "/usr/local/bin/rvm-gem.sh"
   end
 end
 
 install_gem 'spatula'
-install_gem 'vagrant'
+install_gem 'virtualbox', '0.8.3'
+install_gem 'vagrant', '0.7.3'
 install_gem 'vagrant-spatula'
 
 directory '/storage' do

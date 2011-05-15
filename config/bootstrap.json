@@ -24,10 +24,8 @@
     }
   },
 
-  "rvm_gems": [
-    "vagrant"
-  ],
-  
+  "rvm_gems": [ ],
+
   "vagrant": { 
     "machines": {
       "ubuntu": {
