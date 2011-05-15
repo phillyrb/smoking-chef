@@ -44,7 +44,6 @@
     "recipe[rvm::ruby_192]",
     "recipe[vbox]",
     "recipe[rvm_gems]",
-    "recipe[gt-services::heartbeat]",
     "recipe[vagrant-machines]",
     "recipe[rubygems-mirror]",
     "recipe[gt-services::gem-sniffer]",
