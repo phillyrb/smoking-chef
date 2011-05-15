@@ -9,14 +9,10 @@ do
     cp $gem /storage/valid-gems
 done < /storage/rubygems-mirror/valid
 
-exec 1>&2
-
-while read port
+for dir in /storage/machines/*
 do
-    rsync -e "ssh -p $port" -az /storage/valid-gems vagrant@localhost:~
-
-    if [ $? -ne 0 ]
+    if [ -d $dir ]
     then
-        echo "rsync for $port failed to complete"
+        cp -R /storage/valid-gems $dir
     fi
-done < /storage/machines/machine_ports
+done
