@@ -3,30 +3,17 @@ require 'yaml'
 require 'ostruct'
 require 'delegate'
 require 'logger'
-require 'sqlite3'
 
 module Runner
-  class Config < DelegateClass(OpenStruct)
-    def initialize(filename)
-      @ostr = OpenStruct.new YAML.load_file(filename)
-      super(@ostr)
-    end
-  end
-
   class Harness
 
     attr_reader :logger
-    attr_reader :config
-    attr_reader :db
+    attr_accessor :state
 
-    def initialize(config, daemonize=true)
-      @config = config
-
+    def initialize(daemonize=true)
       if daemonize
         fork do
           setup_logger
-
-          logger.debug 'prepping daemonize'
 
           logger.debug 'redirecting filehandles'
 
@@ -46,49 +33,51 @@ module Runner
       end
     end
 
+    def load_state
+      logger.debug 'loading state'
+      self.state = Marshal.load(File.read('state.marshal')) || [ ] rescue [ ]
+    end
+
+    def dump_state
+      logger.debug 'dumping state'
+      File.open('state.marshal', 'w') { |f| f << Marshal.dump(self.state) }
+    end
+
     def setup_logger(foreground=false)
-      @logger = if !foreground and config.respond_to?(:log) and config.log
-                  Logger.new config.log
+      @logger = if foreground
+                  Logger.new STDOUT
                 else
-                  if foreground
-                    Logger.new STDOUT
-                  else
-                    Logger.new '/dev/null'
-                  end
+                  Logger.new 'test-runner.log'
                 end
 
-      if config.respond_to?(:loglevel) 
-        @logger.level = Logger.const_get(config.loglevel.upcase)
-      end
-
+      logger.level = Logger::DEBUG
       logger.debug 'logger initialized'
     end
-
-    def setup_database
-      logger.info 'connecting to database'
-
-      unless config.respond_to?(:database)
-        logger.fatal 'database not specified: aborting'
-        raise "database not specified"
-      end
-
-      @db = SQLite3::Database.new config.database
-      at_exit { @db.close }
-    end
-
+    
     def run_loop
-      setup_database
+      logger.debug 'entering run loop'
 
-      logger.info 'initializing main loop'
+      load_state
 
-      while true
-        sleep 10
+      logger.debug 'globbing'
+
+      gems = Dir["/vagrant/valid-gems/*.gem"].map { |x| File.basename x }
+	
+      (gems - state).each do |gem|
+        system(*%W[rvm gemset clear])
+        system(*%W[gem install rubygems-test])
+
+        logger.info "testing #{gem}"
+        system(*%W[gem test /vagrant/valid-gems/#{gem}])
+
+        if $?.exitstatus == 0
+          state.push(gem)
+        end
       end
+
+      dump_state
     end
   end
 end
 
-Runner::Harness.new(
-  Runner::Config.new(ARGV[0] || '/etc/test-runner.yaml'),
-  ARGV[1] != "1" # run in foreground
-)
+Runner::Harness.new(false)
