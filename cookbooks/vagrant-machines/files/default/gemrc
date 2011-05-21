@@ -1,0 +1,9 @@
+gem: --no-rdoc --no-ri
+test_options:
+ force_uninstall_on_failure: false
+ auto_test_on_install: false
+ install_development_dependencies: true
+ test_development_dependencies: false
+ upload_service_url: "http://10.0.1.2:3000/test_results"
+ upload_results: true
+# vim: ft=yaml

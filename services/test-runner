@@ -1,57 +1,48 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'yaml'
-require 'ostruct'
-require 'delegate'
+require 'rubygems/installer'
 require 'logger'
 
 module Runner
   class Harness
-
-    attr_reader :logger
+    attr_accessor :logger
     attr_accessor :state
+    attr_accessor :blacklist
 
-    def initialize(daemonize=true)
-      if daemonize
-        fork do
-          setup_logger
+    BLACKLIST_FILE = 'blacklist.marshal'
+    STATE_FILE     = 'state.marshal' 
 
-          logger.debug 'redirecting filehandles'
+    def initialize
+      setup_logger
+      run_loop
+    end
 
-          $stdout.reopen('/dev/null')
-          $stderr.reopen('/dev/null')
-          $stdin.reopen('/dev/null')
+    def load_marshal(filename)
+      Marshal.load(File.read(filename)) || [ ] rescue [ ]
+    end
 
-          logger.debug 'setsid'
+    def dump_marshal(obj, filename)
+      File.open(filename, 'w') { |f| f << Marshal.dump(obj) }
+    end
 
-          Process.setsid
-
-          run_loop
-        end
-      else
-        setup_logger(true)
-        run_loop
-      end
+    def load_blacklist
+      logger.debug 'loading blacklist'
+      self.blacklist = load_marshal(BLACKLIST_FILE)
     end
 
     def load_state
       logger.debug 'loading state'
-      self.state = Marshal.load(File.read('state.marshal')) || [ ] rescue [ ]
+      self.state = load_marshal(STATE_FILE)
     end
 
     def dump_state
       logger.debug 'dumping state'
-      File.open('state.marshal', 'w') { |f| f << Marshal.dump(self.state) }
+      dump_marshal(state, STATE_FILE)
     end
 
-    def setup_logger(foreground=false)
-      @logger = if foreground
-                  Logger.new STDOUT
-                else
-                  Logger.new 'test-runner.log'
-                end
-
+    def setup_logger
+      self.logger = Logger.new 'test-runner.log'
       logger.level = Logger::DEBUG
       logger.debug 'logger initialized'
     end
@@ -60,17 +51,23 @@ module Runner
       logger.debug 'entering run loop'
 
       load_state
+      load_blacklist
 
       logger.debug 'globbing'
 
       gems = Dir["/vagrant/valid-gems/*.gem"].map { |x| File.basename x }
 	
-      (gems - state).each do |gem|
+      ((gems - state) - blacklist).each do |gem|
         system(*%W[rvm gemset clear])
         system(*%W[gem install rubygems-test])
 
         logger.info "testing #{gem}"
-        system(*%W[gem test /vagrant/valid-gems/#{gem}])
+        system(*%W[gem install /vagrant/valid-gems/#{gem}])
+
+        if $?.exitstatus == 0
+          gi = Gem::Installer.new("/vagrant/valid-gems/#{gem}")
+          system(*%W[gem test #{gi.spec.name} -v #{gi.spec.version}])
+        end
 
         state.push(gem)
       end
@@ -80,4 +77,4 @@ module Runner
   end
 end
 
-Runner::Harness.new(false)
+Runner::Harness.new

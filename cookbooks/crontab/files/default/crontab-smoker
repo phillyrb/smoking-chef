@@ -1,0 +1,2 @@
+0 22 * * * vagrant (cd /vagrant/services && /usr/local/rvm/bin/rvm-shell '1.9.2' -c 'ruby test-runner' 2>&1 >/dev/null)
+# vim: ft=crontab

@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+BLACKLIST_FILE = 'blacklist.marshal'
+
+def load_marshal(filename)
+  Marshal.load(File.read(filename)) || [ ] rescue [ ]
+end
+
+def dump_marshal(obj, filename)
+  File.open(filename, 'w') { |f| f << Marshal.dump(obj) }
+end
+
+blacklist = load_marshal(BLACKLIST_FILE)
+
+gem = File.basename ARGV[0]
+
+puts "adding #{gem} to blacklist"
+
+blacklist.push(gem)
+
+dump_marshal(blacklist, BLACKLIST_FILE)

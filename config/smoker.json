@@ -24,7 +24,9 @@
   "run_list": [
     "recipe[users::sysadmins]",
     "recipe[sudo]",
-    "recipe[rvm::ruby_192]"
+    "recipe[rvm::ruby_192]",
+    "recipe[crontab::smoker]",
+    "recipe[vagrant-machines::gemrc]"
   ]
 }
 

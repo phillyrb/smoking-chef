@@ -39,14 +39,8 @@ node[:vagrant][:machines].each do |name, machine|
   #
   bash "copying chef repo to /storage/machines/#{name}" do
     user "root"
-    code "cp -vR /tmp/chef-solo /storage/machines/#{name}"
+    code "cp -vR /tmp/chef-solo/* /storage/machines/#{name}"
     only_if "test -d /tmp/chef-solo"
-  end
-
-  git "/storage/machines/#{name}" do
-    user "root"
-    repository "git://github.com/phillyrb/smoking-chef" 
-    not_if "test -d /tmp/chef-solo"
   end
 
   template "/storage/machines/#{name}/Vagrantfile" do
@@ -83,3 +77,4 @@ bash "configure vagrant for startup" do
   code "update-rc.d start 21 stop 19"
   not_if 'test -e /etc/rc2.d/S21vagrant'
 end
+
