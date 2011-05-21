@@ -72,9 +72,7 @@ module Runner
         logger.info "testing #{gem}"
         system(*%W[gem test /vagrant/valid-gems/#{gem}])
 
-        if $?.exitstatus == 0
-          state.push(gem)
-        end
+        state.push(gem)
       end
 
       dump_state

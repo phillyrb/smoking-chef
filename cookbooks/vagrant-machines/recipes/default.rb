@@ -78,19 +78,8 @@ cookbook_file "/etc/init.d/vagrant" do
   mode 0750
 end
 
-service 'vagrant' do
-  action [:enable, :restart]
-  supports :restart => true
-  enabled true
-end
-
-#
-# FIXME
-#
-# Really not happy about this, there has to be some way to do this in the init
-# settings.
-#
-bash "move vagrant run order" do
-  code "mv /etc/rc2.d/S20vagrant /etc/rc2.d/S21vagrant && mv /etc/rc6.d/K20vagrant /etc/rc6.d/K19vagrant"
-  not_if "test -f /etc/rc2.d/S21vagrant"
+bash "configure vagrant for startup" do
+  user "root"
+  code "update-rc.d start 21 stop 19"
+  not_if 'test -e /etc/rc2.d/S21vagrant'
 end
